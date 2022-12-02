@@ -2,30 +2,25 @@ const express = require('express');
 const server = express();
 const port = 3000;
 
-// http://localhost:3000/hello?nome=Tiago&idade=34
-// Query params = ?nome=Tiago&idade=34
-server.get('/hello', (req, res) => {
-  const { nome, idade } = req.query;
+server.use(express.json());
 
-  return res.json({
-    title: "Hello World",
-    message: `Olá ${nome}, tudo bem ?`,
-    idade: idade
-  });
+let customers = [
+  { id: 1, name: "Dev Samurai", site: "http://devsamurai.com.br" },
+  { id: 2, name: "Google", site: "http://google.com.br" },
+  { id: 3, name: "Uol", site: "http://uol.com.br" },
+];
+
+server.get("/customers", (req, res) => {
+  return res.json(customers);
 });
 
 
+server.get("/customers/:id", (req, res) => {
+  const id = parseInt(req.params.id);
+  const customer = customers.find(item => item.id === id);
+  const status = customer ? 200 : 404;
 
-// http://localhost:3000/hello/Tiago
-// Route params = /hello/?nome
-server.get("/hello/:nome", (req, res) => {
-  const {nome} = req.params;
-
-  return res.json({
-    title: "Hello World",
-    message: `Olá ${nome}, tudo bem ?`
-  });
+  return res.status(status).json(customer);
 });
 
-
-server.listen(port);
+server.listen(3000);
